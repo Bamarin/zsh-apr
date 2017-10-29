@@ -18,10 +18,9 @@
 # \e[K  => clears everything after the cursor on the current line
 # \e[2K => clear everything on the current line
 
-
-# turns seconds into human readable time
-# 165392 => 1d 21h 56m 32s
-# https://github.com/sindresorhus/pretty-time-zsh
+#
+# Turns seconds into human readable time (example: 165392 => 1d 21h 56m 32s)
+#
 prompt_apr_human_time_to_var() {
   local human total_seconds=$1 var=$2
   local days=$(( total_seconds / 60 / 60 / 24 ))
@@ -33,11 +32,14 @@ prompt_apr_human_time_to_var() {
   (( minutes > 0 )) && human+="${minutes}m "
   human+="${seconds}s"
 
-  # store human readable time in variable as specified by caller
+  # Store human readable time in variable as specified by caller.
   typeset -g "${var}"="${human}"
 }
 
-# stores (into prompt_apr_cmd_exec_time) the exec time of the last command if set threshold was exceeded
+#
+# Store into `prompt_apr_cmd_exec_time` the exec time of the last command if set
+# threshold was exceeded.
+#
 prompt_apr_check_cmd_exec_time() {
   integer elapsed
   (( elapsed = EPOCHSECONDS - ${prompt_apr_cmd_timestamp:-$EPOCHSECONDS} ))
@@ -51,9 +53,10 @@ prompt_apr_set_title() {
   # emacs terminal does not support settings the title
   (( ${+EMACS} )) && return
 
-  # tell the terminal we are setting the title
+  # Tell the terminal we are setting the title.
   print -n '\e]0;'
-  # show hostname if connected through ssh
+
+  # Show hostname if connected through SSH.
   [[ -n $SSH_CONNECTION ]] && print -Pn '(%m) '
   case $1 in
     expand-prompt)
@@ -67,9 +70,9 @@ prompt_apr_set_title() {
 
 prompt_apr_preexec() {
   if [[ -n $prompt_apr_git_fetch_pattern ]]; then
-    # detect when git is performing pull/fetch (including git aliases).
+    # Detect when git is performing pull/fetch (including git aliases).
     if [[ $2 =~ (git|hub)\ (.*\ )?($prompt_apr_git_fetch_pattern)(\ .*)?$ ]]; then
-      # we must flush the async jobs to cancel our git fetch in order
+      # We must flush the async jobs to cancel our git fetch in order
       # to avoid conflicts with the user issued pull / fetch.
       async_flush_jobs 'prompt_apr'
     fi
@@ -77,11 +80,13 @@ prompt_apr_preexec() {
 
   prompt_apr_cmd_timestamp=$EPOCHSECONDS
 
-  # shows the current dir and executed command in the title while a process is active
+  # Show the current dir and executed command in the title while a process is active
   prompt_apr_set_title 'ignore-escape' "$PWD:t: $2"
 }
 
-# string length ignoring ansi escapes
+#
+# String length, ignoring ansi escapes
+#
 prompt_apr_string_length_to_var() {
   local str=$1 var=$2 length
   # perform expansion on str and check length
