@@ -111,7 +111,7 @@ prompt_apr_preprompt_render() {
   # Initialize the preprompt array.
   local -a preprompt_parts
 
-  # Set the path in a powerline.
+  # Set the path.
   preprompt_parts+=('%K{84}%F{17}%~%k%f%F{84}%f')
 
   # Add git branch and dirty status info.
